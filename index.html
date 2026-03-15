@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Minecraft QuizzMaster</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===== TITLE SCREEN ===== -->
+  <section id="screen-title" class="screen active">
+    <div class="title-container">
+      <div class="title-logo">
+        <h1 class="title-main">Minecraft</h1>
+        <h2 class="title-sub">QuizzMaster</h2>
+      </div>
+      <p class="title-prompt">Select Difficulty</p>
+      <div class="difficulty-grid">
+        <button class="btn btn-difficulty btn-easy"       data-difficulty="easy">Easy</button>
+        <button class="btn btn-difficulty btn-normal"     data-difficulty="normal">Normal</button>
+        <button class="btn btn-difficulty btn-hard"       data-difficulty="hard">Hard</button>
+        <button class="btn btn-difficulty btn-legendary"  data-difficulty="legendary">Legendary</button>
+        <button class="btn btn-difficulty btn-insane"     data-difficulty="insane">Insane</button>
+        <button class="btn btn-difficulty btn-demon"      data-difficulty="demon">Demon</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== LOADING SCREEN ===== -->
+  <section id="screen-loading" class="screen">
+    <div class="loading-container">
+      <p class="loading-title">Generating world</p>
+      <div class="loading-dots">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+      <p class="loading-sub">Consulting the Minecraft Wiki...</p>
+    </div>
+  </section>
+
+  <!-- ===== QUIZ SCREEN ===== -->
+  <section id="screen-quiz" class="screen">
+    <div class="quiz-container">
+
+      <!-- Header bar -->
+      <div class="quiz-header">
+        <span id="quiz-progress">Q 1 / 20</span>
+        <span id="quiz-score">Score: 0</span>
+      </div>
+
+      <!-- XP-style progress bar -->
+      <div class="xp-bar-container">
+        <div class="xp-bar-track">
+          <div id="xp-bar-fill" class="xp-bar-fill" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- Question text -->
+      <div class="question-box">
+        <p id="question-text" class="question-text">Question goes here</p>
+      </div>
+
+      <!-- Answer options -->
+      <div class="options-grid" id="options-grid">
+        <button class="btn btn-option" id="option-0" data-index="0">A) Option 1</button>
+        <button class="btn btn-option" id="option-1" data-index="1">B) Option 2</button>
+        <button class="btn btn-option" id="option-2" data-index="2">C) Option 3</button>
+        <button class="btn btn-option" id="option-3" data-index="3">D) Option 4</button>
+      </div>
+
+      <!-- Explanation (shown after answering) -->
+      <div id="explanation-area" class="explanation-area hidden">
+        <p id="explanation-label" class="explanation-label">Correct!</p>
+        <p id="explanation-text" class="explanation-text"></p>
+        <button class="btn btn-continue" id="btn-continue">Continue &rarr;</button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== RESULTS SCREEN ===== -->
+  <section id="screen-results" class="screen">
+    <div class="results-container">
+      <h2 class="results-title">Quiz Complete!</h2>
+
+      <div class="results-rank-block" id="results-rank-block">
+        <div class="rank-icon" id="rank-icon"></div>
+        <p class="rank-label" id="rank-label">Diamond</p>
+      </div>
+
+      <div class="results-score-block">
+        <p class="results-score-text">You scored</p>
+        <p class="results-score" id="results-score">18 / 20</p>
+        <p class="results-pct" id="results-pct">90%</p>
+      </div>
+
+      <button class="btn btn-play-again" id="btn-play-again">Play Again</button>
+    </div>
+  </section>
+
+  <!-- ===== ERROR SCREEN ===== -->
+  <section id="screen-error" class="screen">
+    <div class="error-container">
+      <p class="error-icon">&#9888;</p>
+      <p class="error-title">Oh no!</p>
+      <p class="error-msg" id="error-msg">Something went wrong generating your quiz.</p>
+      <button class="btn btn-retry" id="btn-retry">Try Again</button>
+      <button class="btn btn-back-title" id="btn-back-title">Back to Title</button>
+    </div>
+  </section>
+
+  <script src="app.js"></script>
+</body>
+</html>
