@@ -55,8 +55,8 @@ This affects all difficulty modes: easy, normal, hard, legendary, insane, and de
 
 ## Phases
 
-- [ ] Phase 1: Add `stripMarkdown()` utility function
-- [ ] Phase 2: Apply the utility to options during question processing
+- [x] Phase 1: Add `stripMarkdown()` utility function
+- [x] Phase 2: Apply the utility to options during question processing
 - [ ] Phase 3: Test across all difficulty modes (easy, normal, hard, legendary, insane, demon)
 - [ ] Phase 4: Verify mobile and desktop rendering
 - [ ] Phase 5: Deploy and verify on live site

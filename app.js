@@ -237,6 +237,15 @@ async function generateQuestions(difficulty) {
     throw new Error("No questions found in API response");
   }
 
+  // Perplexity API sometimes returns bold markdown (**text**) in option strings,
+  // which reveals correct answers visually before selection. Strip it here.
+  const stripMarkdown = (text) => text.replace(/\*\*(.+?)\*\*/g, "$1");
+  for (const q of questions) {
+    if (Array.isArray(q.options)) {
+      q.options = q.options.map(stripMarkdown);
+    }
+  }
+
   // Validate each question has required fields and correct index is in bounds
   return questions.filter((q) => {
     const opts = Array.isArray(q.options) ? q.options : [];
