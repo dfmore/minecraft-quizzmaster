@@ -11,12 +11,12 @@ const WORKER_URL = "https://minecraft-quizzmaster-proxy.dfmore.workers.dev";
 
 // Model selection per difficulty
 const MODELS = {
-  easy:      "mistral-large-latest",
-  normal:    "mistral-large-latest",
-  hard:      "mistral-large-latest",
-  legendary: "mistral-large-latest",
-  insane:    "magistral-medium-latest",
-  demon:     "magistral-medium-latest",
+  easy:      "sonar",
+  normal:    "sonar",
+  hard:      "sonar",
+  legendary: "sonar",
+  insane:    "sonar",
+  demon:     "sonar",
 };
 
 // Total questions per round
@@ -191,17 +191,11 @@ async function generateQuestions(difficulty) {
 
   const data = await response.json();
 
-  // Extract the text content — handles both standard and magistral thinking-mode responses.
-  // Magistral returns content as an array of typed chunks; we want type === "text".
+  // Perplexity sonar always returns string content, so no Array.isArray branch is needed.
   const content = data.choices?.[0]?.message?.content;
   let jsonText;
 
-  if (Array.isArray(content)) {
-    // Thinking-mode response (magistral): filter for text chunks
-    const textChunk = content.find((c) => c.type === "text");
-    if (!textChunk) throw new Error("No text content in magistral response");
-    jsonText = textChunk.text;
-  } else if (typeof content === "string") {
+  if (typeof content === "string") {
     jsonText = content;
   } else {
     throw new Error("Unexpected response content format");

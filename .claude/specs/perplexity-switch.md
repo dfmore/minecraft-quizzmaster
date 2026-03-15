@@ -153,13 +153,13 @@ _Cons:_
 
 ### Phase 1 — Code Changes (Local)
 
-- [ ] Edit `worker/index.js`: Line 15: change `MISTRAL_API_URL` to `"https://api.perplexity.ai/chat/completions"`
-- [ ] Edit `worker/index.js`: Line 80 and 81: change `MISTRAL_API_KEY` to `PERPLEXITY_API_KEY`
-- [ ] Edit `worker/index.js`: Line 104: change `${env.MISTRAL_API_KEY}` to `${env.PERPLEXITY_API_KEY}`
-- [ ] Edit `app.js`: Lines 13-20: replace all model names in `MODELS` object with `"sonar"`
-- [ ] Edit `app.js`: Lines 199-208: remove the entire `if (Array.isArray(content)) { ... }` branch; keep only the `else if (typeof content === "string")` path
-- [ ] Edit `worker/wrangler.toml`: Lines 2, 13-14: update comments from Mistral to Perplexity references
-- [ ] Verify changes compile: `node app.js` (syntax check) and `node worker/index.js` (syntax check)
+- [x] Edit `worker/index.js`: Line 15: change `MISTRAL_API_URL` to `"https://api.perplexity.ai/chat/completions"`
+- [x] Edit `worker/index.js`: Line 80 and 81: change `MISTRAL_API_KEY` to `PERPLEXITY_API_KEY`
+- [x] Edit `worker/index.js`: Line 104: change `${env.MISTRAL_API_KEY}` to `${env.PERPLEXITY_API_KEY}`
+- [x] Edit `app.js`: Lines 13-20: replace all model names in `MODELS` object with `"sonar"`
+- [x] Edit `app.js`: Lines 199-208: remove the entire `if (Array.isArray(content)) { ... }` branch; keep only the `else if (typeof content === "string")` path
+- [x] Edit `worker/wrangler.toml`: Lines 2, 13-14: update comments from Mistral to Perplexity references
+- [x] Verify changes compile: `node app.js` (syntax check) and `node worker/index.js` (syntax check)
 
 ### Phase 2 — Deploy Worker
 

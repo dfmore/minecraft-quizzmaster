@@ -10,8 +10,8 @@ compatibility_date = "2024-01-01"
 #   cd worker
 #   wrangler deploy
 #
-# Set your Mistral API key (stored securely, never in this file):
-#   wrangler secret put MISTRAL_API_KEY
+# Set your Perplexity API key (stored securely, never in this file):
+#   wrangler secret put PERPLEXITY_API_KEY
 #
 # After setting the key, update ALLOWED_ORIGINS in index.js
 # with your actual GitHub Pages URL before production deploy:

@@ -2,17 +2,17 @@
 // Minecraft QuizzMaster — Cloudflare Worker proxy
 //
 // Receives POST requests from the GitHub Pages frontend,
-// injects the Mistral API key (stored as a wrangler secret),
-// and forwards to the Mistral chat completions endpoint.
+// injects the Perplexity API key (stored as a wrangler secret),
+// and forwards to the Perplexity chat completions endpoint.
 //
 // Deploy:
 //   cd worker && wrangler deploy
 //
 // Set API key (once, never committed):
-//   wrangler secret put MISTRAL_API_KEY
+//   wrangler secret put PERPLEXITY_API_KEY
 // =====================================================
 
-const MISTRAL_API_URL = "https://api.mistral.ai/v1/chat/completions";
+const PERPLEXITY_API_URL = "https://api.perplexity.ai/chat/completions";
 
 // ── Origin allowlist ─────────────────────────────────
 // For development: allow all origins ("*").
@@ -77,14 +77,14 @@ export default {
     }
 
     // ── Validate API key is configured ─────────────────
-    if (!env.MISTRAL_API_KEY) {
-      return new Response("Server misconfigured: MISTRAL_API_KEY secret not set", {
+    if (!env.PERPLEXITY_API_KEY) {
+      return new Response("Server misconfigured: PERPLEXITY_API_KEY secret not set", {
         status: 500,
         headers: corsHeaders(allowedOrigin),
       });
     }
 
-    // ── Forward to Mistral ────────────────────────────
+    // ── Forward to Perplexity ─────────────────────────
     let requestBody;
     try {
       requestBody = await request.text();
@@ -95,13 +95,13 @@ export default {
       });
     }
 
-    let mistralResponse;
+    let perplexityResponse;
     try {
-      mistralResponse = await fetch(MISTRAL_API_URL, {
+      perplexityResponse = await fetch(PERPLEXITY_API_URL, {
         method: "POST",
         headers: {
           "Content-Type":  "application/json",
-          "Authorization": `Bearer ${env.MISTRAL_API_KEY}`,
+          "Authorization": `Bearer ${env.PERPLEXITY_API_KEY}`,
         },
         body: requestBody,
       });
@@ -112,14 +112,14 @@ export default {
       });
     }
 
-    // ── Forward Mistral response with CORS headers ────
-    const responseBody = await mistralResponse.text();
+    // ── Forward Perplexity response with CORS headers ─
+    const responseBody = await perplexityResponse.text();
 
     return new Response(responseBody, {
-      status: mistralResponse.status,
+      status: perplexityResponse.status,
       headers: {
         ...corsHeaders(allowedOrigin),
-        "Content-Type": mistralResponse.headers.get("Content-Type") || "application/json",
+        "Content-Type": perplexityResponse.headers.get("Content-Type") || "application/json",
       },
     });
   },
