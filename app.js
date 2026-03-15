@@ -173,7 +173,31 @@ async function generateQuestions(difficulty) {
       { role: "system", content: systemPrompt },
       { role: "user",   content: userPrompt   },
     ],
-    response_format: { type: "json_object" },
+    response_format: {
+      type: "json_schema",
+      json_schema: {
+        name: "quiz_questions",
+        schema: {
+          type: "object",
+          properties: {
+            questions: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  question:    { type: "string" },
+                  options:     { type: "array", items: { type: "string" } },
+                  correct:     { type: "integer" },
+                  explanation: { type: "string" },
+                },
+                required: ["question", "options", "correct", "explanation"],
+              },
+            },
+          },
+          required: ["questions"],
+        },
+      },
+    },
     temperature: 0.7,
     max_tokens: 4096,
   };
