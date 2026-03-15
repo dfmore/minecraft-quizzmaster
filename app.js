@@ -246,6 +246,21 @@ async function generateQuestions(difficulty) {
     }
   }
 
+  // Shuffle option order so the correct answer isn't always in the same position.
+  // Fisher-Yates shuffle, updating q.correct to track the new position.
+  for (const q of questions) {
+    if (!Array.isArray(q.options) || typeof q.correct !== "number") continue;
+    const opts = q.options;
+    let correctIdx = q.correct;
+    for (let i = opts.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [opts[i], opts[j]] = [opts[j], opts[i]];
+      if (correctIdx === i) correctIdx = j;
+      else if (correctIdx === j) correctIdx = i;
+    }
+    q.correct = correctIdx;
+  }
+
   // Validate each question has required fields and correct index is in bounds
   return questions.filter((q) => {
     const opts = Array.isArray(q.options) ? q.options : [];
