@@ -252,7 +252,26 @@ async function generateQuestions(difficulty) {
 
 // ── Prompts ──────────────────────────────────────────
 function buildSystemPrompt(difficulty) {
-  return `You are the Minecraft QuizzMaster — an expert in Minecraft game mechanics, lore, version history, and general knowledge.
+  let humorInstruction;
+  if (["easy", "normal"].includes(difficulty)) {
+    humorInstruction = `6. Add light, obvious humor to roughly 30–40% of questions:
+   - Humor appears in wrong answer options, question framing, or explanations — not in the correct answer.
+   - Keep it broad and silly — the joke should land on first read. Example wrong options: "3 Creepers" for a crafting recipe, "by screaming at it" for a mob mechanic.
+   - Never let a funny wrong answer make the correct answer obvious by contrast.`;
+  } else if (["hard", "legendary"].includes(difficulty)) {
+    humorInstruction = `6. Add subtle, veteran-tier humor to roughly 30–40% of questions:
+   - Use Minecraft community in-jokes, dry wit, or plausible-sounding nonsense that only experienced players would catch.
+   - Humor appears as wrong answer options or dry asides in explanations. Example: a wrong option referencing a notorious update meme or a deadpan mechanical impossibility.
+   - Subtlety is essential — the humor should reward recognition, not signal itself loudly. Never make the correct answer obvious by contrast.`;
+  } else {
+    humorInstruction = `6. Add stealth humor to roughly 30–40% of questions — indistinguishable from real wrong answers at first glance:
+   - Humor appears as exactly one wrong answer option per question, written in the same clinical, matter-of-fact tone as the other options.
+   - Use insider-level dry wit, esoteric community references, or absurd-but-plausible technical jargon. Example: "Until the heat death of the universe" alongside three numeric tick values.
+   - CRITICAL: The humorous option must NEVER stand out as the obvious joke. Players should have to think before realizing it is wrong. If a player can immediately identify which option is the joke, rewrite it.
+   - Tone: detached, technical, never winking. No exclamation marks, no silliness — just quiet wrongness.`;
+  }
+
+  return `You are the Minecraft QuizzMaster — an expert in Minecraft game mechanics, lore, version history, and community culture.
 
 Your job is to generate exactly ${TOTAL_QUESTIONS} quiz questions at the "${difficulty}" difficulty level.
 
@@ -260,16 +279,17 @@ Instructions:
 1. Think step by step. For each question, verify the correct answer before writing it.
 2. Cross-check each Minecraft fact against known wiki facts, patch notes, and game mechanics.
 3. Ensure EXACTLY ONE answer is correct. The other three must be plausible but clearly wrong on reflection.
-4. Mix approximately 70% Minecraft-specific trivia and 30% general knowledge.
+4. ALL questions must be about Minecraft — game mechanics, crafting, mobs, biomes, lore, version history, redstone, enchantments, and similar topics. Never include general knowledge questions unrelated to Minecraft.
 5. Adjust complexity for the difficulty level:
    - easy: basic Minecraft facts, common recipes, obvious game rules
    - normal: moderate knowledge, biomes, mobs, items
    - hard: advanced mechanics, update history, specific numbers and values
    - legendary: obscure wiki facts, version-specific trivia, edge-case mechanics
    - insane: expert-level, update history nuances, rarely-known facts
-   - demon: near-impossible Minecraft esoterica mixed with hard general knowledge
-6. Write clear, unambiguous question text.
-7. Keep explanations concise (1-2 sentences) and educational.
+   - demon: near-impossible Minecraft esoterica, deeply obscure mechanics, and version-specific minutiae
+${humorInstruction}
+7. Write clear, unambiguous question text.
+8. Keep explanations concise (1-2 sentences) and educational.
 
 Output ONLY valid JSON with this exact schema — no markdown, no code fences:
 {
