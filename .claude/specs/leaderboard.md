@@ -72,7 +72,7 @@ Minecraft QuizzMaster has no cross-session persistence. Players earn ranks and s
 ### API Design
 
 **`POST /api/score`**
-- Body: `{ alias: string, points: number, difficulty: string }`
+- Body: `{ alias: string, points: number }`
 - Validates alias = 5 uppercase alphanumeric chars; rejects otherwise (400)
 - Validates `points` is a non-negative integer; rejects otherwise (400)
 - Reads existing KV record for alias (or creates new)
@@ -178,35 +178,35 @@ No active worktrees found. The `humor-prompts` and `perplexity-switch` worktrees
 
 ## Phases
 
-- [ ] **Phase 1 — Worker KV API**
-  - [ ] Add `[[kv_namespaces]]` to `wrangler.toml` (builder adds placeholder ID; user creates namespace with `wrangler kv namespace create` and fills ID)
-  - [ ] Add `handleScore()` to `worker/index.js` (POST /api/score)
-  - [ ] Add `handleLeaderboard()` to `worker/index.js` (GET /api/leaderboard)
-  - [ ] Add URL-based routing before existing Perplexity proxy block
-  - [ ] Update CORS `Allow-Methods` to include `GET`
-  - [ ] Smoke-test with `curl` against local `wrangler dev`
+- [x] **Phase 1 — Worker KV API**
+  - [x] Add `[[kv_namespaces]]` to `wrangler.toml` (builder adds placeholder ID; user creates namespace with `wrangler kv namespace create` and fills ID)
+  - [x] Add `handleScore()` to `worker/index.js` (POST /api/score)
+  - [x] Add `handleLeaderboard()` to `worker/index.js` (GET /api/leaderboard)
+  - [x] Add URL-based routing before existing Perplexity proxy block
+  - [x] Update CORS `Allow-Methods` to include `GET`
+  - [ ] Smoke-test with `curl` against local `wrangler dev` (requires user to deploy with real KV ID)
 
-- [ ] **Phase 2 — Alias system**
-  - [ ] Add `<section id="screen-alias">` to `index.html`
-  - [ ] Add alias screen CSS to `style.css` (input styling matching pixel-art bevel aesthetic)
-  - [ ] Add `DIFFICULTY_MULTIPLIERS` const to `app.js`
-  - [ ] Add alias check logic to `app.js` — intercepts difficulty button click, shows alias screen if not set in `localStorage`
-  - [ ] Store validated alias in `localStorage`, then proceed to game
-  - [ ] Add "Change Alias" button to title screen — navigates to alias screen with current alias pre-filled
-  - [ ] Add tip text on alias screen
+- [x] **Phase 2 — Alias system**
+  - [x] Add `<section id="screen-alias">` to `index.html`
+  - [x] Add alias screen CSS to `style.css` (input styling matching pixel-art bevel aesthetic)
+  - [x] Add `DIFFICULTY_MULTIPLIERS` const to `app.js`
+  - [x] Add alias check logic to `app.js` — intercepts difficulty button click, shows alias screen if not set in `localStorage`
+  - [x] Store validated alias in `localStorage`, then proceed to game
+  - [x] Add "Change Alias" button to title screen — navigates to alias screen with current alias pre-filled
+  - [x] Add tip text on alias screen
 
-- [ ] **Phase 3 — Score submission + results integration**
-  - [ ] Add `submitScore()` async function to `app.js`
-  - [ ] Call from `showResults()` — fire-and-forget
-  - [ ] Show "Points earned: +NNN" on results screen (new DOM element in `index.html`, new CSS)
-  - [ ] Compute `pointsThisRound = GameState.score × 10 × DIFFICULTY_MULTIPLIERS[difficulty]`
+- [x] **Phase 3 — Score submission + results integration**
+  - [x] Add `submitScore()` async function to `app.js`
+  - [x] Call from `showResults()` — fire-and-forget
+  - [x] Show "Points earned: +NNN" on results screen (new DOM element in `index.html`, new CSS)
+  - [x] Compute `pointsThisRound = GameState.score × 10 × DIFFICULTY_MULTIPLIERS[difficulty]`
 
-- [ ] **Phase 4 — Leaderboard UI**
-  - [ ] Add "Leaderboard" button to title screen in `index.html`
-  - [ ] Add `<section id="screen-leaderboard">` to `index.html`
-  - [ ] Add leaderboard CSS (table, rank colors) to `style.css`
-  - [ ] Add `showLeaderboard()` function to `app.js` — fetches `GET /api/leaderboard`, renders table
-  - [ ] Add `screens.leaderboard` to `screens` object and `showScreen()` compatible
+- [x] **Phase 4 — Leaderboard UI**
+  - [x] Add "Leaderboard" button to title screen in `index.html`
+  - [x] Add `<section id="screen-leaderboard">` to `index.html`
+  - [x] Add leaderboard CSS (table, rank colors) to `style.css`
+  - [x] Add `showLeaderboard()` function to `app.js` — fetches `GET /api/leaderboard`, renders table
+  - [x] Add `screens.leaderboard` to `screens` object and `showScreen()` compatible
 
 - [ ] **Phase 5 — Deploy**
   - [ ] User runs `wrangler kv namespace create QUIZZMASTER_LEADERBOARD`

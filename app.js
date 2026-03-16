@@ -1,6 +1,7 @@
 // =====================================================
 // Minecraft QuizzMaster — app.js
-// State machine: TITLE → LOADING → QUIZ → RESULTS → TITLE
+// State machine: TITLE → (ALIAS) → LOADING → QUIZ → RESULTS → TITLE
+//                TITLE → LEADERBOARD → TITLE
 // =====================================================
 
 // ── CONFIGURE THIS before deploying ──────────────────
@@ -22,6 +23,16 @@ const MODELS = {
 // Total questions per round
 const TOTAL_QUESTIONS = 20;
 
+// ── Difficulty multipliers for scoring ───────────────
+const DIFFICULTY_MULTIPLIERS = {
+  easy:      1,
+  normal:    1.5,
+  hard:      2,
+  legendary: 2.5,
+  insane:    3,
+  demon:     4,
+};
+
 // Rank thresholds (score out of 20)
 const RANKS = [
   { name: "Netherite", min: 19, color: "#5C5C6E", cssVar: "--netherite" },
@@ -36,42 +47,49 @@ const RANKS = [
 // ── Game state ─────────────────────────────────────
 // Clean separation for future extensibility (leaderboard, multiplayer).
 let GameState = {
-  screen:          "TITLE",    // TITLE | LOADING | QUIZ | RESULTS | ERROR
-  difficulty:      null,
-  questions:       [],
-  currentQuestion: 0,
-  score:           0,
-  answers:         [],         // { questionId, selectedIndex, correct }
-  lastDifficulty:  null,       // for retry after error
+  screen:             "TITLE",    // TITLE | ALIAS | LOADING | QUIZ | RESULTS | ERROR | LEADERBOARD
+  difficulty:         null,
+  pendingDifficulty:  null,       // difficulty to start after alias entry
+  questions:          [],
+  currentQuestion:    0,
+  score:              0,
+  answers:            [],         // { questionId, selectedIndex, correct }
+  lastDifficulty:     null,       // for retry after error
 };
 
 // ── DOM refs ────────────────────────────────────────
 const screens = {
-  title:   document.getElementById("screen-title"),
-  loading: document.getElementById("screen-loading"),
-  quiz:    document.getElementById("screen-quiz"),
-  results: document.getElementById("screen-results"),
-  error:   document.getElementById("screen-error"),
+  title:       document.getElementById("screen-title"),
+  alias:       document.getElementById("screen-alias"),
+  loading:     document.getElementById("screen-loading"),
+  quiz:        document.getElementById("screen-quiz"),
+  results:     document.getElementById("screen-results"),
+  error:       document.getElementById("screen-error"),
+  leaderboard: document.getElementById("screen-leaderboard"),
 };
 
 const $ = (id) => document.getElementById(id);
 
 // ── Cached DOM refs for hot-path elements ────────────
 const el = {
-  options:          Array.from({ length: 4 }, (_, i) => $(`option-${i}`)),
-  optionsGrid:      $("options-grid"),
-  questionText:     $("question-text"),
-  quizProgress:     $("quiz-progress"),
-  quizScore:        $("quiz-score"),
-  xpBarFill:        $("xp-bar-fill"),
-  explanationArea:  $("explanation-area"),
-  explanationLabel: $("explanation-label"),
-  explanationText:  $("explanation-text"),
-  rankIcon:         $("rank-icon"),
-  rankLabel:        $("rank-label"),
-  resultsScore:     $("results-score"),
-  resultsPct:       $("results-pct"),
-  errorMsg:         $("error-msg"),
+  options:           Array.from({ length: 4 }, (_, i) => $(`option-${i}`)),
+  optionsGrid:       $("options-grid"),
+  questionText:      $("question-text"),
+  quizProgress:      $("quiz-progress"),
+  quizScore:         $("quiz-score"),
+  xpBarFill:         $("xp-bar-fill"),
+  explanationArea:   $("explanation-area"),
+  explanationLabel:  $("explanation-label"),
+  explanationText:   $("explanation-text"),
+  rankIcon:          $("rank-icon"),
+  rankLabel:         $("rank-label"),
+  resultsScore:      $("results-score"),
+  resultsPct:        $("results-pct"),
+  resultsPoints:     $("results-points"),
+  errorMsg:          $("error-msg"),
+  aliasError:        $("alias-error"),
+  aliasInput:        $("alias-input"),
+  leaderboardContent: $("leaderboard-content"),
 };
 
 // ── Screen navigation ────────────────────────────────
@@ -81,12 +99,85 @@ function showScreen(name) {
   GameState.screen = name.toUpperCase();
 }
 
+// ── Alias helpers ────────────────────────────────────
+const ALIAS_KEY = "quizzmaster_alias";
+
+function getStoredAlias() {
+  return localStorage.getItem(ALIAS_KEY) || null;
+}
+
+function setStoredAlias(alias) {
+  localStorage.setItem(ALIAS_KEY, alias);
+}
+
+function validateAlias(raw) {
+  const upper = raw.trim().toUpperCase();
+  if (/^[A-Z0-9]{5}$/.test(upper)) return upper;
+  return null;
+}
+
 // ── Difficulty button handlers ───────────────────────
 document.querySelectorAll(".btn-difficulty").forEach((btn) => {
   btn.addEventListener("click", () => {
     const difficulty = btn.dataset.difficulty;
-    startGame(difficulty);
+    const alias = getStoredAlias();
+    if (!alias) {
+      // Gate: must set alias first
+      GameState.pendingDifficulty = difficulty;
+      el.aliasInput.value = "";
+      showScreen("alias");
+    } else {
+      startGame(difficulty);
+    }
   });
+});
+
+// ── Change Alias button ──────────────────────────────
+$("btn-change-alias").addEventListener("click", () => {
+  const current = getStoredAlias();
+  el.aliasInput.value = current || "";
+  GameState.pendingDifficulty = null; // not triggered from difficulty click
+  showScreen("alias");
+});
+
+// ── Alias submission ─────────────────────────────────
+function submitAlias() {
+  const raw = el.aliasInput.value;
+  const alias = validateAlias(raw);
+
+  if (!alias) {
+    el.aliasError.classList.remove("hidden");
+    return;
+  }
+
+  el.aliasError.classList.add("hidden");
+
+  setStoredAlias(alias);
+
+  if (GameState.pendingDifficulty) {
+    const difficulty = GameState.pendingDifficulty;
+    GameState.pendingDifficulty = null;
+    startGame(difficulty);
+  } else {
+    showScreen("title");
+  }
+}
+
+$("btn-alias-submit").addEventListener("click", submitAlias);
+
+el.aliasInput.addEventListener("keydown", (e) => {
+  // Force uppercase live
+  if (e.key === "Enter") {
+    e.preventDefault();
+    submitAlias();
+  }
+});
+
+// Force uppercase as user types
+el.aliasInput.addEventListener("input", () => {
+  const pos = el.aliasInput.selectionStart;
+  el.aliasInput.value = el.aliasInput.value.toUpperCase();
+  el.aliasInput.setSelectionRange(pos, pos);
 });
 
 // ── Play again ───────────────────────────────────────
@@ -139,6 +230,18 @@ document.addEventListener("keydown", (e) => {
     }
   }
 });
+
+// ── Score submission (fire-and-forget) ───────────────
+async function submitScore(alias, points) {
+  const response = await fetch(`${WORKER_URL}/api/score`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ alias, points }),
+  });
+  if (!response.ok) {
+    throw new Error(`Score submission failed: ${response.status}`);
+  }
+}
 
 // ── Main game flow ───────────────────────────────────
 async function startGame(difficulty) {
@@ -433,24 +536,94 @@ function advanceQuestion() {
 
 // ── Results screen ────────────────────────────────────
 function showResults() {
-  const score = GameState.score;
-  const total = GameState.questions.length;
-  const pct   = Math.round((score / total) * 100);
+  const score      = GameState.score;  // raw correct-answer count (0–20)
+  const total      = GameState.questions.length;
+  const pct        = Math.round((score / total) * 100);
+  const multiplier = DIFFICULTY_MULTIPLIERS[GameState.difficulty] || 1;
+  const points     = Math.round(score * 10 * multiplier);
 
   // Determine rank
   const rank = RANKS.find((r) => score >= r.min) || RANKS[RANKS.length - 1];
 
   // Update DOM
-  el.resultsScore.textContent = `${score} / ${total}`;
-  el.resultsPct.textContent   = `${pct}%`;
-  el.rankLabel.textContent    = rank.name;
-  el.rankLabel.style.color    = rank.color;
+  el.resultsScore.textContent  = `${score} / ${total}`;
+  el.resultsPct.textContent    = `${pct}%`;
+  el.rankLabel.textContent     = rank.name;
+  el.rankLabel.style.color     = rank.color;
   el.rankIcon.style.backgroundColor = rank.color;
+  el.resultsPoints.textContent = `Points earned: +${points}`;
 
   // Update XP bar to full
   el.xpBarFill.style.width = "100%";
 
   showScreen("results");
+
+  // Submit score — fire-and-forget, never blocks UI
+  const alias = getStoredAlias();
+  if (alias) {
+    submitScore(alias, points).catch(() => {});
+  }
+}
+
+// ── Leaderboard ───────────────────────────────────────
+$("btn-show-leaderboard").addEventListener("click", () => {
+  showLeaderboard();
+});
+
+$("btn-leaderboard-back").addEventListener("click", () => {
+  showScreen("title");
+});
+
+async function showLeaderboard() {
+  showScreen("leaderboard");
+  el.leaderboardContent.innerHTML = '<p class="leaderboard-loading">Loading...</p>';
+
+  try {
+    const response = await fetch(`${WORKER_URL}/api/leaderboard`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    renderLeaderboard(data.entries || []);
+  } catch (err) {
+    console.error("Leaderboard fetch failed:", err);
+    el.leaderboardContent.innerHTML = '<p class="leaderboard-error">Could not load leaderboard</p>';
+  }
+}
+
+function renderLeaderboard(entries) {
+  if (!entries || entries.length === 0) {
+    el.leaderboardContent.innerHTML = '<p class="leaderboard-empty">No scores yet — be the first!</p>';
+    return;
+  }
+
+  const rows = entries.map((entry) => {
+    const rankClass = entry.rank <= 3 ? ` rank-${entry.rank}` : "";
+    return `<tr>
+      <td class="rank-cell${rankClass}">#${entry.rank}</td>
+      <td class="alias-cell">${escapeHtml(entry.alias)}</td>
+      <td class="score-cell">${escapeHtml(String(entry.score))}</td>
+    </tr>`;
+  }).join("");
+
+  el.leaderboardContent.innerHTML = `
+    <table class="leaderboard-table">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Alias</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
 // ── Error display ─────────────────────────────────────

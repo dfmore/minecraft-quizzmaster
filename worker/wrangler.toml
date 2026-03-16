@@ -16,3 +16,10 @@ compatibility_date = "2024-01-01"
 # After setting the key, update ALLOWED_ORIGINS in index.js
 # with your actual GitHub Pages URL before production deploy:
 #   const ALLOWED_ORIGINS = ["https://yourusername.github.io"];
+
+# ── KV Namespace: Leaderboard ─────────────────────────
+# Create with: wrangler kv namespace create QUIZZMASTER_LEADERBOARD
+# Then replace the placeholder id below with the real namespace ID.
+[[kv_namespaces]]
+binding = "QUIZZMASTER_LEADERBOARD"
+id      = "240d65ce86044042a742930eeea69d9a"

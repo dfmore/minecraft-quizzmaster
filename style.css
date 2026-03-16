@@ -539,6 +539,230 @@ html, body {
 .btn-back-title:hover { background-color: #999; }
 
 /* =====================================================
+   TITLE — extra action buttons (Leaderboard / Change Alias)
+   ===================================================== */
+.title-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.btn-leaderboard {
+  background-color: var(--stone);
+  color: var(--coal);
+  font-size: 10px;
+  padding: 12px 8px;
+  box-shadow:
+    inset  var(--border-sz)  var(--border-sz) 0 var(--stone-light),
+    inset calc(-1 * var(--border-sz)) calc(-1 * var(--border-sz)) 0 var(--stone-dark);
+  border-left: 4px solid var(--gold);
+}
+
+.btn-leaderboard:hover {
+  background-color: #999;
+  transform: translateY(-2px);
+}
+
+.btn-leaderboard:active {
+  box-shadow:
+    inset  var(--border-sz)  var(--border-sz) 0 var(--stone-dark),
+    inset calc(-1 * var(--border-sz)) calc(-1 * var(--border-sz)) 0 var(--stone-light);
+  transform: translateY(1px);
+}
+
+.btn-change-alias {
+  background-color: var(--stone);
+  color: var(--coal);
+  font-size: 8px;
+  padding: 10px 8px;
+  box-shadow:
+    inset  var(--border-sz)  var(--border-sz) 0 var(--stone-light),
+    inset calc(-1 * var(--border-sz)) calc(-1 * var(--border-sz)) 0 var(--stone-dark);
+}
+
+.btn-change-alias:hover {
+  background-color: #999;
+  transform: translateY(-1px);
+}
+
+.btn-change-alias:active {
+  box-shadow:
+    inset  var(--border-sz)  var(--border-sz) 0 var(--stone-dark),
+    inset calc(-1 * var(--border-sz)) calc(-1 * var(--border-sz)) 0 var(--stone-light);
+  transform: translateY(1px);
+}
+
+/* =====================================================
+   ALIAS SCREEN
+   ===================================================== */
+.alias-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+}
+
+.alias-title {
+  font-size: 14px;
+  color: var(--gold);
+  text-shadow: 3px 3px 0 var(--coal);
+}
+
+.alias-tip {
+  font-size: 7px;
+  color: var(--text-dim);
+  line-height: 2.2;
+  background-color: var(--coal);
+  padding: 12px 16px;
+  box-shadow:
+    inset  3px  3px 0 rgba(255,255,255,0.06),
+    inset -3px -3px 0 rgba(0,0,0,0.5);
+}
+
+.alias-input-wrap {
+  width: 100%;
+}
+
+.alias-input {
+  font-family: var(--font);
+  font-size: 22px;
+  letter-spacing: 8px;
+  text-align: center;
+  text-transform: uppercase;
+  width: 100%;
+  padding: 14px 10px;
+  background-color: var(--coal);
+  color: var(--gold);
+  border: none;
+  outline: none;
+  caret-color: var(--gold);
+  box-shadow:
+    inset  var(--border-sz)  var(--border-sz) 0 rgba(0,0,0,0.6),
+    inset calc(-1 * var(--border-sz)) calc(-1 * var(--border-sz)) 0 rgba(255,255,255,0.08);
+  -webkit-font-smoothing: none;
+}
+
+.alias-input::placeholder {
+  color: #555;
+}
+
+.alias-hint {
+  font-size: 7px;
+  color: var(--text-dim);
+  line-height: 2;
+}
+
+.alias-error {
+  font-size: 7px;
+  color: #FF4A4A;
+  line-height: 2;
+}
+
+/* =====================================================
+   RESULTS — points earned
+   ===================================================== */
+.results-points {
+  font-size: 10px;
+  color: var(--gold);
+  text-shadow: 2px 2px 0 var(--coal);
+  letter-spacing: 1px;
+}
+
+/* =====================================================
+   LEADERBOARD SCREEN
+   ===================================================== */
+.leaderboard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  max-width: 540px;
+  width: 100%;
+  text-align: center;
+}
+
+.leaderboard-title {
+  font-size: 16px;
+  color: var(--gold);
+  text-shadow: 3px 3px 0 var(--coal);
+}
+
+.leaderboard-content {
+  width: 100%;
+  min-height: 120px;
+}
+
+.leaderboard-loading,
+.leaderboard-empty,
+.leaderboard-error {
+  font-size: 8px;
+  color: var(--text-dim);
+  line-height: 2.5;
+  padding: 24px 0;
+}
+
+.leaderboard-error {
+  color: #FF4A4A;
+}
+
+/* Leaderboard table */
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 9px;
+}
+
+.leaderboard-table th {
+  color: var(--text-dim);
+  font-size: 7px;
+  padding: 8px 6px;
+  text-align: left;
+  letter-spacing: 1px;
+  border-bottom: 2px solid var(--stone-dark);
+}
+
+.leaderboard-table th:last-child {
+  text-align: right;
+}
+
+.leaderboard-table td {
+  padding: 10px 6px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  line-height: 1.6;
+}
+
+.leaderboard-table td:last-child {
+  text-align: right;
+}
+
+/* Rank cell — colored by position */
+.leaderboard-table .rank-cell {
+  font-size: 8px;
+  font-weight: bold;
+  width: 40px;
+}
+
+.rank-1 { color: var(--gold); }
+.rank-2 { color: var(--iron); }
+.rank-3 { color: var(--copper); }
+
+/* Alias cell */
+.leaderboard-table .alias-cell {
+  letter-spacing: 3px;
+  color: var(--text);
+}
+
+/* Score cell */
+.leaderboard-table .score-cell {
+  color: var(--gold);
+  font-size: 9px;
+}
+
+/* =====================================================
    UTILITY
    ===================================================== */
 .hidden { display: none !important; }
@@ -563,9 +787,12 @@ html, body {
     grid-template-columns: 1fr;
   }
 
-  .question-text { font-size: 9px; }
-  .results-score { font-size: 16px; }
-  .results-title { font-size: 12px; }
+  .question-text      { font-size: 9px; }
+  .results-score      { font-size: 16px; }
+  .results-title      { font-size: 12px; }
+  .alias-input        { font-size: 18px; letter-spacing: 6px; }
+  .leaderboard-title  { font-size: 12px; }
+  .leaderboard-table  { font-size: 8px; }
 }
 
 @media (min-width: 481px) and (max-width: 768px) {

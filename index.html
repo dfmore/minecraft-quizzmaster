@@ -27,6 +27,34 @@
         <button class="btn btn-difficulty btn-insane"     data-difficulty="insane">Insane</button>
         <button class="btn btn-difficulty btn-demon"      data-difficulty="demon">Demon</button>
       </div>
+      <div class="title-actions">
+        <button class="btn btn-leaderboard" id="btn-show-leaderboard">Leaderboard</button>
+        <button class="btn btn-change-alias" id="btn-change-alias">Change Alias</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ALIAS SCREEN ===== -->
+  <section id="screen-alias" class="screen">
+    <div class="alias-container">
+      <h2 class="alias-title">Enter Your Alias</h2>
+      <p class="alias-tip">This alias tracks your score —<br>you can change it anytime<br>from the title screen</p>
+      <div class="alias-input-wrap">
+        <input
+          type="text"
+          id="alias-input"
+          class="alias-input"
+          maxlength="5"
+          placeholder="STEVE"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="characters"
+          spellcheck="false"
+        />
+      </div>
+      <p class="alias-hint">5 characters, letters and numbers only</p>
+      <p id="alias-error" class="alias-error hidden">Must be exactly 5 letters or numbers</p>
+      <button class="btn btn-play-again" id="btn-alias-submit">Confirm</button>
     </div>
   </section>
 
@@ -99,6 +127,8 @@
         <p class="results-pct" id="results-pct">90%</p>
       </div>
 
+      <p class="results-points" id="results-points">Points earned: +0</p>
+
       <button class="btn btn-play-again" id="btn-play-again">Play Again</button>
     </div>
   </section>
@@ -111,6 +141,16 @@
       <p class="error-msg" id="error-msg">Something went wrong generating your quiz.</p>
       <button class="btn btn-retry" id="btn-retry">Try Again</button>
       <button class="btn btn-back-title" id="btn-back-title">Back to Title</button>
+    </div>
+  </section>
+
+  <!-- ===== LEADERBOARD SCREEN ===== -->
+  <section id="screen-leaderboard" class="screen">
+    <div class="leaderboard-container">
+      <h2 class="leaderboard-title">Leaderboard</h2>
+      <div id="leaderboard-content" class="leaderboard-content">
+      </div>
+      <button class="btn btn-back-title" id="btn-leaderboard-back">Back</button>
     </div>
   </section>
 
